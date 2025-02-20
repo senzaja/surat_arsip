@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @push('script')
     <script>
@@ -9,7 +9,7 @@
         document.addEventListener('DOMContentLoaded', function (e) {
             (function () {
                 // Update/reset user image of account page
-                let accountUserImage = document.getElementById('uploadedAvatar');
+                let  accountUserImage= document.getElementById('uploadedAvatar');
                 const fileInput = document.querySelector('.account-file-input'),
                     resetFileInput = document.querySelector('.account-image-reset');
 
@@ -43,9 +43,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="javascript:void(0);">{{ __('navbar.profile.profile') }}</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="{{ route('settings.show') }}">{{ __('navbar.profile.settings') }}</a>
-                </li>
+                </li> -->
             </ul>
             @endif
 
@@ -63,7 +63,7 @@
                                     <span class="d-none d-sm-block">{{ __('menu.general.upload') }}</span>
                                     <i class="bx bx-upload d-block d-sm-none"></i>
                                     <input type="file" name="profile_picture" id="upload" class="account-file-input" hidden=""
-                                           accept="image/png, image/jpeg">
+                                           accept="image/png, image/jpeg, image/gif">
                                 </label>
                                 <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
                                     <i class="bx bx-reset d-block d-sm-none"></i>

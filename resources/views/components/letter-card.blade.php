@@ -17,10 +17,7 @@
                     {{ $letter->formatted_letter_date }}
                 </div>
                 @if($letter->type == 'incoming')
-                    <div class="mx-3">
-                        <a href="{{ route('transaction.disposition.index', $letter) }}"
-                           class="btn btn-primary btn">{{ __('model.letter.dispose') }} <span>({{ $letter->dispositions->count() }})</span></a>
-                    </div>
+                   
                 @endif
                 <div class="dropdown d-inline-block">
                     <button class="btn p-0" type="button" id="dropdown-{{ $letter->type }}-{{ $letter->id }}"
@@ -35,15 +32,7 @@
                                 <a class="dropdown-item"
                                    href="{{ route('transaction.incoming.show', $letter) }}">{{ __('menu.general.view') }}</a>
                             @endif
-                            <a class="dropdown-item"
-                               href="{{ route('transaction.incoming.edit', $letter) }}">{{ __('menu.general.edit') }}</a>
-                            <form action="{{ route('transaction.incoming.destroy', $letter) }}" class="d-inline"
-                                  method="post">
-                                @csrf
-                                @method('DELETE')
-                                <span
-                                    class="dropdown-item cursor-pointer btn-delete">{{ __('menu.general.delete') }}</span>
-                            </form>
+                            
                         </div>
                     @else
                         <div class="dropdown-menu dropdown-menu-end"

@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('letters', function (Blueprint $table) {
             $table->id();
             $table->string('reference_number')->unique()->comment('Nomor Surat');
-            $table->string('agenda_number');
+            $table->string('agenda_number')->nullable();
             $table->string('from')->nullable();
             $table->string('to')->nullable();
             $table->date('letter_date')->nullable();
@@ -25,7 +25,6 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('type')->default('incoming')->comment('Surat Masuk (incoming)/Surat Keluar (outgoing)');
             $table->string('classification_code');
-            $table->foreign('classification_code')->references('code')->on('classifications');
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate();
             $table->timestamps();
         });

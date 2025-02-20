@@ -28,6 +28,7 @@ class PageController extends Controller
      */
     public function index(Request $request): View
     {
+        // Ambil tahun dan bulan yang dipilih atau default ke tahun dan bulan sekarang
         $todayIncomingLetter = Letter::incoming()->today()->count();
         $todayOutgoingLetter = Letter::outgoing()->today()->count();
         $todayDispositionLetter = Disposition::today()->count();
@@ -38,9 +39,17 @@ class PageController extends Controller
         $yesterdayDispositionLetter = Disposition::yesterday()->count();
         $yesterdayLetterTransaction = $yesterdayIncomingLetter + $yesterdayOutgoingLetter + $yesterdayDispositionLetter;
 
+        // Tambahkan greeting dan tanggal saat ini
+        $greeting = GeneralHelper::greeting();
+        $currentDate = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
+
+        // Data transaksi per bulan (bisa diambil dari database)
+        $monthlyIncomingLetters = [10, 20, 15, 30, 25, 40, 35, 50, 45, 60, 55, 70];
+        $monthlyOutgoingLetters = [5, 15, 10, 25, 20, 30, 25, 35, 30, 45, 40, 60];
+
         return view('pages.dashboard', [
-            'greeting' => GeneralHelper::greeting(),
-            'currentDate' => Carbon::now()->isoFormat('dddd, D MMMM YYYY'),
+            'greeting' => $greeting,
+            'currentDate' => $currentDate,
             'todayIncomingLetter' => $todayIncomingLetter,
             'todayOutgoingLetter' => $todayOutgoingLetter,
             'todayDispositionLetter' => $todayDispositionLetter,
@@ -50,6 +59,8 @@ class PageController extends Controller
             'percentageOutgoingLetter' => GeneralHelper::calculateChangePercentage($yesterdayOutgoingLetter, $todayOutgoingLetter),
             'percentageDispositionLetter' => GeneralHelper::calculateChangePercentage($yesterdayDispositionLetter, $todayDispositionLetter),
             'percentageLetterTransaction' => GeneralHelper::calculateChangePercentage($yesterdayLetterTransaction, $todayLetterTransaction),
+            'monthlyIncomingLetters' => $monthlyIncomingLetters,
+            'monthlyOutgoingLetters' => $monthlyOutgoingLetters,
         ]);
     }
 
@@ -73,17 +84,15 @@ class PageController extends Controller
         try {
             $newProfile = $request->validated();
             if ($request->hasFile('profile_picture')) {
-//               DELETE OLD PICTURE
+                // DELETE OLD PICTURE
                 $oldPicture = auth()->user()->profile_picture;
                 if (str_contains($oldPicture, '/storage/avatars/')) {
                     $url = parse_url($oldPicture, PHP_URL_PATH);
                     Storage::delete(str_replace('/storage', 'public', $url));
                 }
 
-//                UPLOAD NEW PICTURE
-                $filename = time() .
-                    '-' . $request->file('profile_picture')->getFilename() .
-                    '.' . $request->file('profile_picture')->getClientOriginalExtension();
+                // UPLOAD NEW PICTURE
+                $filename = time() . '-' . $request->file('profile_picture')->getClientOriginalName();
                 $request->file('profile_picture')->storeAs('public/avatars', $filename);
                 $newProfile['profile_picture'] = asset('storage/avatars/' . $filename);
             }
@@ -146,12 +155,14 @@ class PageController extends Controller
     {
         try {
             $attachment = Attachment::find($request->id);
-            $oldPicture = $attachment->path_url;
-            if (str_contains($oldPicture, '/storage/attachments/')) {
-                $url = parse_url($oldPicture, PHP_URL_PATH);
-                Storage::delete(str_replace('/storage', 'public', $url));
+            if ($attachment) {
+                $oldPicture = $attachment->path_url;
+                if (str_contains($oldPicture, '/storage/attachments/')) {
+                    $url = parse_url($oldPicture, PHP_URL_PATH);
+                    Storage::delete(str_replace('/storage', 'public', $url));
+                }
+                $attachment->delete();
             }
-            $attachment->delete();
             return back()->with('success', __('menu.general.success'));
         } catch (\Throwable $exception) {
             return back()->with('error', $exception->getMessage());

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @section('content')
     <x-breadcrumb
@@ -22,3 +22,4 @@
     {!! $data->appends(['search' => $search])->links() !!}
 
 @endsection
+

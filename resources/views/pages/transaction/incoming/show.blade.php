@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @section('content')
     <x-breadcrumb
@@ -21,13 +21,12 @@
                 <dt class="col-sm-3">{{ __('model.letter.reference_number') }}</dt>
                 <dd class="col-sm-9">{{ $data->reference_number }}</dd>
 
-                <dt class="col-sm-3">{{ __('model.letter.agenda_number') }}</dt>
+                <dt class="col-sm-3">{{ __('kode surat') }}</dt>
                 <dd class="col-sm-9">{{ $data->agenda_number }}</dd>
 
-                <dt class="col-sm-3">{{ __('model.classification.code') }}</dt>
-                <dd class="col-sm-9">{{ $data->classification_code }}</dd>
+              
 
-                <dt class="col-sm-3">{{ __('model.classification.type') }}</dt>
+                <dt class="col-sm-3">{{ __('lembar disposisi') }}</dt>
                 <dd class="col-sm-9">{{ $data->classification?->type }}</dd>
 
                 <dt class="col-sm-3">{{ __('model.letter.from') }}</dt>

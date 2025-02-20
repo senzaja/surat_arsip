@@ -1,10 +1,10 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @push('script')
     <script>
         $(document).on('click', '.btn-edit', function () {
             const id = $(this).data('id');
-            $('#editModal form').attr('action', '{{ route('reference.status.index') }}/' + id);
+            $('#editModal form').attr('action', "{{ route('reference.status.index') }}/" + id);
             $('#editModal input:hidden#id').val(id);
             $('#editModal input#status').val($(this).data('status'));
         });

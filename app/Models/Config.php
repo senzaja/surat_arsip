@@ -11,13 +11,13 @@ class Config extends Model
 
     protected $fillable = [
         'code',
-        'value',
+        'value',    
     ];
 
-    public static function getValueByCode(\App\Enums\Config $code): string
+    public static function getValueByCode(\App\Enums\Config $code)  
     {
         $config = self::code($code)->first();
-        return $config->value;
+        
     }
 
     public function scopeCode($query, \App\Enums\Config $code)

@@ -1,18 +1,20 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @push('script')
     <script>
         $(document).on('click', '.btn-edit', function () {
             const id = $(this).data('id');
-            $('#editModal form').attr('action', '{{ route('user.index') }}/' + id);
+            // Pastikan rute menuju user.update dengan ID yang sesuai
+            $('#editModal form').attr('action', '{{ route('user.update', '') }}/' + id);
             $('#editModal input:hidden#id').val(id);
             $('#editModal input#name').val($(this).data('name'));
             $('#editModal input#phone').val($(this).data('phone'));
             $('#editModal input#email').val($(this).data('email'));
+
             if ($(this).data('active') == 1) {
-                $('#editModal input#is_active').attr('checked', 1)
+                $('#editModal input#is_active').prop('checked', true);
             } else {
-                $('#editModal input#is_active').removeAttribute('checked');
+                $('#editModal input#is_active').prop('checked', false);
             }
         });
     </script>
@@ -114,7 +116,8 @@
                 <div class="modal-body">
                     <x-input-form name="name" :label="__('model.user.name')"/>
                     <x-input-form name="email" :label="__('model.user.email')" type="email"/>
-                    <x-input-form name="phone" :label="__('model.user.phone')"/>
+                     <x-input-form name="phone" :label="__('model.user.phone')"/>
+                    <x-input-form name="password" :label="__('model.user.password')" type="password"/>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
@@ -146,6 +149,7 @@
                     <x-input-form name="name" :label="__('model.user.name')"/>
                     <x-input-form name="email" :label="__('model.user.email')" type="email"/>
                     <x-input-form name="phone" :label="__('model.user.phone')"/>
+                     <x-input-form name="password" :label="__('model.user.password')" type="password"/>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="is_active" value="true" id="is_active">
                         <label class="form-check-label" for="is_active"> {{ __('model.user.is_active') }} </label>

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @section('content')
     <x-breadcrumb
@@ -62,7 +62,7 @@
                 </tr>
                 </thead>
                 @if($data)
-                    <tbody>
+                    <tbody> 
                     @foreach($data as $agenda)
                         <tr>
                             <td><i class="fab fa-angular fa-lg text-danger me-3"></i>

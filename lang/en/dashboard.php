@@ -7,7 +7,7 @@ return [
         'evening' => 'Good Evening, :Name!',
         'night' => 'Good Evening, :Name!',
     ],
-    'incoming_letter' => 'Incoming',
+    'incoming' => 'Incoming',
     'outgoing_letter' => 'Outgoing',
     'disposition_letter' => 'Disposition',
     'active_user' => 'Active Users',

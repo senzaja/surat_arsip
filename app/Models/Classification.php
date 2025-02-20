@@ -13,7 +13,7 @@ class Classification extends Model
     protected $fillable = [
         'code',
         'type',
-        'description',
+        
     ];
 
     public function scopeSearch($query, $search)
@@ -21,7 +21,7 @@ class Classification extends Model
         return $query->when($search, function($query, $find) {
             return $query
                 ->where('type', 'LIKE', $find . '%')
-                ->orWhere('code', $find);
+                ->orWhere('code',  $find);
         });
     }
 

@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use TheSeer\Tokenizer\Exception;
 
 class UserController extends Controller
@@ -38,8 +39,9 @@ class UserController extends Controller
     public function store(StoreUserRequest $request): RedirectResponse
     {
         try {
+
             $newUser = $request->validated();
-            $newUser['password'] = Hash::make(Config::getValueByCode(ConfigEnum::DEFAULT_PASSWORD));
+            $newUser['password'] = Hash::make($request->password);
             User::create($newUser);
             return back()->with('success', __('menu.general.success'));
         } catch (\Throwable $exception) {
@@ -59,11 +61,22 @@ class UserController extends Controller
         try {
             $newUser = $request->validated();
             $newUser['is_active'] = isset($newUser['is_active']);
-            if ($request->reset_password)
-                $newUser['password'] = Hash::make(Config::getValueByCode(ConfigEnum::DEFAULT_PASSWORD));
+            
+            if ($request->reset_password) {
+                $newUser['password'] = Hash::make("default_password"); // Password default
+            } elseif ($request->filled('password')) {
+                // Jika password baru disediakan, hash password sebelum update
+                $newUser['password'] = Hash::make($request->password);
+            }
+    
             $user->update($newUser);
+    
+            // Logging untuk memastikan password diperbarui
+            Log::info('User updated successfully', ['user_id' => $user->id]);
+    
             return back()->with('success', __('menu.general.success'));
         } catch (\Throwable $exception) {
+            Log::error('Error updating user', ['error' => $exception->getMessage()]);
             return back()->with('error', $exception->getMessage());
         }
     }

@@ -1,4 +1,4 @@
-@extends('layout.main')
+@extends('layouts.main')
 
 @section('content')
     <x-breadcrumb
@@ -17,7 +17,7 @@
                     <x-input-form name="from" :label="__('model.letter.from')"/>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4">
-                    <x-input-form name="agenda_number" :label="__('model.letter.agenda_number')"/>
+                    <x-input-form name="agenda_number" :label="__('kode surat ')"/>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-6">
                     <x-input-form name="letter_date" :label="__('model.letter.letter_date')" type="date"/>
@@ -26,12 +26,12 @@
                     <x-input-form name="received_date" :label="__('model.letter.received_date')" type="date"/>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 col-lg-12">
-                    <x-input-textarea-form name="description" :label="__('model.letter.description')"/>
+                    <x-input-textarea-form name="description" :label="__('perihal')"/>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4">
                     <div class="mb-3">
                         <label for="classification_code"
-                               class="form-label">{{ __('model.letter.classification_code') }}</label>
+                               class="form-label">{{ __('lembar disposisi') }}</label>
                         <select class="form-select" id="classification_code" name="classification_code">
                             @foreach($classifications as $classification)
                                 <option
@@ -44,11 +44,11 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4">
-                    <x-input-form name="note" :label="__('model.letter.note')"/>
+                    <x-input-form name="note" :label="__('disposisi surat')"/>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4">
                     <div class="mb-3">
-                        <label for="attachments" class="form-label">{{ __('model.letter.attachment') }}</label>
+                        <label for="attachments" class="form-label">lampiran</label>
                         <input type="file" class="form-control @error('attachments') is-invalid @enderror" id="attachments"
                                name="attachments[]" multiple/>
                         <span class="error invalid-feedback">{{ $errors->first('attachments') }}</span>

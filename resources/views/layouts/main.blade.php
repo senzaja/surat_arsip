@@ -32,7 +32,7 @@
     <meta name="description" content=""/>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('logo-black.png') }}"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('stfi.png') }}"/>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -64,6 +64,7 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('sneat/js/config.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
@@ -87,6 +88,10 @@
                     @yield('content')
                 </div>
                 <!-- / Content -->
+
+                <!-- sweet alert -->
+                @include('sweetalert::alert')
+                <!-- sweet alert/ -->
 
                 <!-- Footer -->
                 @include('components.footer')
@@ -123,19 +128,40 @@
 <script>
     $(document).on('click', '.btn-delete', function (req) {
         Swal.fire({
-            title: '{{ __('menu.general.delete_confirm') }}',
+            title: "{{ __('menu.general.delete_confirm') }}",
             text: "{{ __('menu.general.delete_warning') }}",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#696cff',
-            confirmButtonText: '{{ __('menu.general.delete') }}',
-            cancelButtonText: '{{ __('menu.general.cancel') }}'
+            confirmButtonText: "{{ __('menu.general.delete') }}",
+            cancelButtonText: "{{ __('menu.general.cancel') }}"
         }).then((result) => {
             if (result.isConfirmed) {
                 $(this).parent('form').submit();
             }
         })
     });
+</script>
+
+<!-- theme -->
+<script>
+    // Fungsi untuk toggle tema
+    function toggleTheme() {
+        const body = document.body;
+        const theme = body.classList.toggle('dark-theme') ? 'dark' : 'light';
+        localStorage.setItem('theme', theme);
+    }
+
+    // Ambil preferensi tema dari local storage saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+    });
+
+    // Pasang event listener untuk tombol toggle
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 </script>
 
 <!-- Page JS -->
@@ -145,21 +171,21 @@
     <script>
         Toast.fire({
             icon: 'success',
-            title: '{{ session('success') }}'
+            title: "{{ session('success') }}"
         })
     </script>
 @elseif(session('error'))
     <script>
         Toast.fire({
             icon: 'error',
-            title: '{{ session('error') }}'
+            title: "{{ session('error') }}"
         })
     </script>
 @elseif(session('info'))
     <script>
         Toast.fire({
             icon: 'info',
-            title: '{{ session('info') }}'
+            title: "{{ session('info') }}"
         })
     </script>
 @endif

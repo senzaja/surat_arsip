@@ -28,7 +28,13 @@ class PageController extends Controller
      */
     public function index(Request $request): View
     {
-        // Ambil tahun dan bulan yang dipilih atau default ke tahun dan bulan sekarang
+        // Ambil jumlah total surat masuk dan keluar (tidak reset setiap hari)
+        $totalIncomingLetter = Letter::incoming()->count();
+        $totalOutgoingLetter = Letter::outgoing()->count();
+        $totalDispositionLetter = Disposition::count();
+        $totalLetterTransaction = $totalIncomingLetter + $totalOutgoingLetter + $totalDispositionLetter;
+
+        // Ambil data hari ini
         $todayIncomingLetter = Letter::incoming()->today()->count();
         $todayOutgoingLetter = Letter::outgoing()->today()->count();
         $todayDispositionLetter = Disposition::today()->count();
@@ -43,129 +49,45 @@ class PageController extends Controller
         $greeting = GeneralHelper::greeting();
         $currentDate = Carbon::now()->isoFormat('dddd, D MMMM YYYY');
 
-        // Data transaksi per bulan (bisa diambil dari database)
-        $monthlyIncomingLetters = [10, 20, 15, 30, 25, 40, 35, 50, 45, 60, 55, 70];
-        $monthlyOutgoingLetters = [5, 15, 10, 25, 20, 30, 25, 35, 30, 45, 40, 60];
+        // // Data transaksi per bulan (bisa diambil dari database)
+        // $monthlyIncomingLetters = [10, 20, 15, 30, 25, 40, 35, 50, 45, 60, 55, 70];
+        // $monthlyOutgoingLetters = [5, 15, 10, 25, 20, 30, 25, 35, 30, 45, 40, 60];
+
+        $monthlyIncomingLetters = Letter::incoming()
+    ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+    ->groupBy('month')
+    ->orderBy('month')
+    ->pluck('total', 'month')
+    ->toArray();
+
+$monthlyOutgoingLetters = Letter::outgoing()
+    ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+    ->groupBy('month')
+    ->orderBy('month')
+    ->pluck('total', 'month')
+    ->toArray();
+
+// Pastikan array memiliki 12 bulan (Jan - Des)
+$monthlyIncomingLetters = array_replace(array_fill(1, 12, 0), $monthlyIncomingLetters);
+$monthlyOutgoingLetters = array_replace(array_fill(1, 12, 0), $monthlyOutgoingLetters);
 
         return view('pages.dashboard', [
-            'greeting' => $greeting,
-            'currentDate' => $currentDate,
-            'todayIncomingLetter' => $todayIncomingLetter,
-            'todayOutgoingLetter' => $todayOutgoingLetter,
-            'todayDispositionLetter' => $todayDispositionLetter,
-            'todayLetterTransaction' => $todayLetterTransaction,
-            'activeUser' => User::active()->count(),
-            'percentageIncomingLetter' => GeneralHelper::calculateChangePercentage($yesterdayIncomingLetter, $todayIncomingLetter),
-            'percentageOutgoingLetter' => GeneralHelper::calculateChangePercentage($yesterdayOutgoingLetter, $todayOutgoingLetter),
-            'percentageDispositionLetter' => GeneralHelper::calculateChangePercentage($yesterdayDispositionLetter, $todayDispositionLetter),
-            'percentageLetterTransaction' => GeneralHelper::calculateChangePercentage($yesterdayLetterTransaction, $todayLetterTransaction),
-            'monthlyIncomingLetters' => $monthlyIncomingLetters,
-            'monthlyOutgoingLetters' => $monthlyOutgoingLetters,
+          'greeting' => $greeting,
+    'currentDate' => $currentDate,
+    'totalIncomingLetter' => $totalIncomingLetter,
+    'totalOutgoingLetter' => $totalOutgoingLetter,
+    'todayIncomingLetter' => $todayIncomingLetter,
+    'todayOutgoingLetter' => $todayOutgoingLetter,
+    'todayDispositionLetter' => $todayDispositionLetter,
+    'todayLetterTransaction' => $todayLetterTransaction,
+    'totalLetterTransaction' => $totalLetterTransaction,
+    'activeUser' => User::active()->count(),
+    'percentageIncomingLetter' => GeneralHelper::calculateChangePercentage($yesterdayIncomingLetter, $todayIncomingLetter),
+    'percentageOutgoingLetter' => GeneralHelper::calculateChangePercentage($yesterdayOutgoingLetter, $todayOutgoingLetter),
+    'percentageDispositionLetter' => GeneralHelper::calculateChangePercentage($yesterdayDispositionLetter, $todayDispositionLetter),
+    'percentageLetterTransaction' => GeneralHelper::calculateChangePercentage($yesterdayLetterTransaction, $todayLetterTransaction),
+    'monthlyIncomingLetters' => array_values($monthlyIncomingLetters),
+    'monthlyOutgoingLetters' => array_values($monthlyOutgoingLetters),
         ]);
-    }
-
-    /**
-     * @param Request $request
-     * @return View
-     */
-    public function profile(Request $request): View
-    {
-        return view('pages.profile', [
-            'data' => auth()->user(),
-        ]);
-    }
-
-    /**
-     * @param UpdateUserRequest $request
-     * @return RedirectResponse
-     */
-    public function profileUpdate(UpdateUserRequest $request): RedirectResponse
-    {
-        try {
-            $newProfile = $request->validated();
-            if ($request->hasFile('profile_picture')) {
-                // DELETE OLD PICTURE
-                $oldPicture = auth()->user()->profile_picture;
-                if (str_contains($oldPicture, '/storage/avatars/')) {
-                    $url = parse_url($oldPicture, PHP_URL_PATH);
-                    Storage::delete(str_replace('/storage', 'public', $url));
-                }
-
-                // UPLOAD NEW PICTURE
-                $filename = time() . '-' . $request->file('profile_picture')->getClientOriginalName();
-                $request->file('profile_picture')->storeAs('public/avatars', $filename);
-                $newProfile['profile_picture'] = asset('storage/avatars/' . $filename);
-            }
-            auth()->user()->update($newProfile);
-            return back()->with('success', __('menu.general.success'));
-        } catch (\Throwable $exception) {
-            return back()->with('error', $exception->getMessage());
-        }
-    }
-
-    /**
-     * @return RedirectResponse
-     */
-    public function deactivate(): RedirectResponse
-    {
-        try {
-            auth()->user()->update(['is_active' => false]);
-            Auth::logout();
-            return back()->with('success', __('menu.general.success'));
-        } catch (\Throwable $exception) {
-            return back()->with('error', $exception->getMessage());
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return View
-     */
-    public function settings(Request $request): View
-    {
-        return view('pages.setting', [
-            'configs' => Config::all(),
-        ]);
-    }
-
-    /**
-     * @param UpdateConfigRequest $request
-     * @return RedirectResponse
-     */
-    public function settingsUpdate(UpdateConfigRequest $request): RedirectResponse
-    {
-        try {
-            DB::beginTransaction();
-            foreach ($request->validated() as $code => $value) {
-                Config::where('code', $code)->update(['value' => $value]);
-            }
-            DB::commit();
-            return back()->with('success', __('menu.general.success'));
-        } catch (\Throwable $exception) {
-            DB::rollBack();
-            return back()->with('error', $exception->getMessage());
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function removeAttachment(Request $request): RedirectResponse
-    {
-        try {
-            $attachment = Attachment::find($request->id);
-            if ($attachment) {
-                $oldPicture = $attachment->path_url;
-                if (str_contains($oldPicture, '/storage/attachments/')) {
-                    $url = parse_url($oldPicture, PHP_URL_PATH);
-                    Storage::delete(str_replace('/storage', 'public', $url));
-                }
-                $attachment->delete();
-            }
-            return back()->with('success', __('menu.general.success'));
-        } catch (\Throwable $exception) {
-            return back()->with('error', $exception->getMessage());
-        }
     }
 }

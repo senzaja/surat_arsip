@@ -49,42 +49,41 @@
     <script src="{{ asset('sneat/vendor/libs/apex-charts/apexcharts.js') }}"></script>
     <script>
        document.addEventListener("DOMContentLoaded", function () {
-    const options = {
-        chart: {
-            type: 'bar',
-            height: 350,
-            toolbar: {
-                tools: {
-                    download: false
-                },
-
+        const options = {
+    chart: {
+        type: 'bar',
+        height: 350,
+        toolbar: {
+            tools: {
+                download: false
             }
-        },
-        colors: ['#28a745', '#007bff'],
-        series: [
-            {
-                name: '{{ __("dashboard.incoming_letter") }}',
-                data: @json($monthlyIncomingLetters)
-            },
-            {
-                name: '{{ __("dashboard.outgoing_letter") }}',
-                data: @json($monthlyOutgoingLetters)
-            }
-        ],
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '50%',
-                endingShape: 'rounded'
-            }
-        },
-        dataLabels: {
-            enabled: false
-        },
-        xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
         }
-    };
+    },
+    colors: ['#28a745', '#007bff'],
+    series: [
+        {
+            name: 'Surat Masuk',
+            data: {{ json_encode($monthlyIncomingLetters) }}
+        },
+        {
+            name: 'Surat Keluar',
+            data: {{ json_encode($monthlyOutgoingLetters) }}
+        }
+    ],
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: '50%',
+            endingShape: 'rounded'
+        }
+    },
+    dataLabels: {
+        enabled: false
+    },
+    xaxis: {
+        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
+    }
+};
 
     const chart = new ApexCharts(document.querySelector("#monthly-graphic"), options);
     chart.render();
@@ -113,7 +112,7 @@ function toggleMenu() {
                         <div class="card-body">
                             <h4 class="card-title text-primary">{{ $greeting }}</h4>
                             <p class="mb-4">{{ $currentDate }}</p>
-                            <p class="text-gray" style="font-size: smaller">*) {{ __('dashboard.today_report') }}</p>
+                            <p class="text-gray" style="font-size: smaller">*) {{ __('dashboard.total_report') }}</p>
                         </div>
                     </div>
                     <div class="col-sm-5 text-center">
@@ -128,7 +127,7 @@ function toggleMenu() {
             <div class="card">
                 <div class="card-body">
 
-                    <h5 class="card-title">{{ __('grafik ') }}</h5>
+                    <h5 class="card-title">{{ __('GRAFIK  ') }}</h5>
                     <div id="monthly-graphic" style="min-height: 350px;"></div>
 
                     <div class="mt-sm-auto">
@@ -141,7 +140,7 @@ function toggleMenu() {
                                 {{-- <i class="bx bx-chevron-down"></i> {{ $percentageLetterTransaction }}% --}}
                             </small>
                         @endif
-                        {{-- <h3 class="mb-0 display-4">{{ $todayLetterTransaction }}</h3> --}}
+                        {{-- <h3 class="mb-0 display-4">{{ $totalLetterTransaction }}</h3> --}}
                     </div>
                 </div>
             </div>
@@ -151,13 +150,15 @@ function toggleMenu() {
         <div class="col-lg-4 order-1">
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <x-dashboard-card-simple :label="__('dashboard.incoming_letter')" :value="$todayIncomingLetter"
-                        :daily="true" color="success" icon="bx-envelope" :percentage="$percentageIncomingLetter" />
+                    <x-dashboard-card-simple :label="__('dashboard.incoming_letter')" :value="$totalIncomingLetter"
+    :daily="false" color="success" icon="bx-envelope" :percentage="0" />
+
                 </div>
 
                 <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <x-dashboard-card-simple :label="__('dashboard.outgoing_letter')" :value="$todayOutgoingLetter"
-                        :daily="true" color="danger" icon="bx-envelope" :percentage="$percentageOutgoingLetter" />
+                    <x-dashboard-card-simple :label="__('dashboard.outgoing_letter')" :value="$totalOutgoingLetter"
+    :daily="false" color="danger" icon="bx-envelope" :percentage="0" />
+
                 </div>
 
                 @if (Auth::user()->role == 'admin')

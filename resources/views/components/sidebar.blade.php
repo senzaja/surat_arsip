@@ -57,7 +57,8 @@
             </li>
         </li>
 
-        @if(auth()->user()->role == 'admin')
+        {{-- @if(auth()->user()->role == 'admin') --}}
+        @if (Auth::check() && Auth::user()->role != 'admin')
         <!-- Laporan -->
         <li class="menu-item {{ \Illuminate\Support\Facades\Route::is('laporan.*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -79,7 +80,7 @@
         </li>
         @endif
 
-        @if(auth()->user()->role == 'admin')
+        @if (Auth::check() && Auth::user()->role == 'admin')
         <!-- User Management -->
         <li class="menu-item {{ \Illuminate\Support\Facades\Route::is('user.*') ? 'active' : '' }}">
             <a href="{{ route('user.index') }}" class="menu-link">
@@ -88,5 +89,6 @@
             </a>
         </li>
         @endif
+
     </ul>
 </aside>

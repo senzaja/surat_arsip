@@ -56,8 +56,12 @@
                     <!-- Account -->
                     <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4">
-                            <img src="{{ $data->profile_picture }}" alt="user-avatar"
-                                 class="d-block rounded" height="100" width="100" id="uploadedAvatar">
+                            <img src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('default/avatar.png') }}"
+                            alt="user-avatar"
+                            class="d-block rounded"
+                            height="100" width="100"
+                            id="uploadedAvatar">
+
                             <div class="button-wrapper">
                                 <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
                                     <span class="d-none d-sm-block">{{ __('menu.general.upload') }}</span>
@@ -77,15 +81,15 @@
                     <hr class="my-0">
                     <div class="card-body">
                         <div class="row">
-                            <input type="hidden" name="id" value="{{ $data->id }}">
+                            <input type="hidden" name="id" value="{{ $user->id }}">
                             <div class="col-md-6 col-lg-12">
-                                <x-input-form name="name" :label="__('model.user.name')" :value="$data->name" />
+                                <x-input-form name="name" :label="__('model.user.name')" :value="$user->name" />
                             </div>
                             <div class="col-md-6">
-                                <x-input-form name="email" :label="__('model.user.email')" :value="$data->email" />
+                                <x-input-form name="email" :label="__('model.user.email')" :value="$user->email" />
                             </div>
                             <div class="col-md-6">
-                                <x-input-form name="phone" :label="__('model.user.phone')" :value="$data->phone ?? ''" />
+                                <x-input-form name="phone" :label="__('model.user.phone')" :value="$user->phone ?? ''" />
                             </div>
                         </div>
                         <div class="mt-2">

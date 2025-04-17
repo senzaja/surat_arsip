@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,18 +11,24 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px; /* Ukuran default lebih kecil */
+            width: 32px;
+            /* Ukuran default lebih kecil */
             height: 32px;
-            border-radius: 50%; /* Membuat avatar berbentuk lingkaran */
-            overflow: hidden; /* Memastikan gambar tidak keluar dari lingkaran */
+            border-radius: 50%;
+            /* Membuat avatar berbentuk lingkaran */
+            overflow: hidden;
+            /* Memastikan gambar tidak keluar dari lingkaran */
             position: relative;
         }
 
         /* Avatar image */
         .avatar img {
-            width: 100%; /* Skala gambar mengikuti kontainer */
-            height: 100%; /* Skala gambar mengikuti kontainer */
-            object-fit: cover; /* Menjaga proporsi gambar */
+            width: 100%;
+            /* Skala gambar mengikuti kontainer */
+            height: 100%;
+            /* Skala gambar mengikuti kontainer */
+            object-fit: cover;
+            /* Menjaga proporsi gambar */
         }
 
         /* Status indicator */
@@ -29,31 +36,39 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 8px; /* Sesuaikan ukuran indikator status */
-            height: 8px; /* Sesuaikan ukuran indikator status */
+            width: 8px;
+            /* Sesuaikan ukuran indikator status */
+            height: 8px;
+            /* Sesuaikan ukuran indikator status */
             border-radius: 50%;
-            background-color: green; /* Warna indikator online */
-            border: 2px solid white; /* Batas putih untuk kontras */
+            background-color: green;
+            /* Warna indikator online */
+            border: 2px solid white;
+            /* Batas putih untuk kontras */
         }
 
         /* Responsiveness for larger screens */
         @media (min-width: 768px) {
             .avatar {
-                width: 36px; /* Sedikit lebih besar untuk layar lebih besar */
+                width: 36px;
+                /* Sedikit lebih besar untuk layar lebih besar */
                 height: 36px;
             }
         }
 
         @media (min-width: 1200px) {
             .avatar {
-                width: 40px; /* Ukuran lebih besar di layar sangat lebar */
+                width: 40px;
+                /* Ukuran lebih besar di layar sangat lebar */
                 height: 40px;
             }
         }
     </style>
 </head>
+
 <body>
-    <nav class="layout-navbar container-xxl zindex-5 navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+    <nav class="layout-navbar container-xxl zindex-5 navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+        id="layout-navbar">
         <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
             <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                 <i class="bx bx-menu bx-sm"></i>
@@ -66,14 +81,9 @@
                 <div class="navbar-nav align-items-center">
                     <div class="nav-item d-flex align-items-center">
                         <i class="bx bx-search fs-4 lh-0"></i>
-                        <input
-                            type="text"
-                            name="search"
-                            value="{{ $search ?? '' }}"
-                            class="form-control border-0 shadow-none"
-                            placeholder="{{ __('navbar.search') }}"
-                            aria-label="{{ __('navbar.search') }}"
-                        />
+                        <input type="text" name="search" value="{{ $search ?? '' }}"
+                            class="form-control border-0 shadow-none" placeholder="{{ __('navbar.search') }}"
+                            aria-label="{{ __('navbar.search') }}" />
                     </div>
                 </div>
             </form>
@@ -84,7 +94,16 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                     <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                         <div class="avatar avatar-online">
-                            <img src="{{ auth()->user()->profile_picture }}" alt="User Profile Picture" class="rounded-circle" />
+                            {{-- <img src="{{ auth()->user()->profile_picture }}" alt="User Profile Picture" class="rounded-circle" /> --}}
+                            @if (Auth::check())
+                            <img src="{{ auth()->user()->profile_picture ? asset('storage/' . auth()->user()->profile_picture) : asset('default-avatar.png') }}"
+                                alt="User Profile Picture"
+                                class="rounded-circle" />
+                        @else
+                            <img src="{{ asset('default-avatar.png') }}" alt="Guest" class="rounded-circle" />
+                        @endif
+
+
                             <!-- Online status indicator -->
                             <div class="status-indicator"></div>
                         </div>
@@ -95,14 +114,30 @@
                                 <div class="d-flex">
                                     <div class="flex-shrink-0 me-3">
                                         <div class="avatar avatar-online">
-                                            <img src="{{ auth()->user()->profile_picture }}" alt="User Profile Picture" class="rounded-circle" />
+                                            {{-- <img src="{{ auth()->user()->profile_picture }}" alt="User Profile Picture"
+                                                class="rounded-circle" /> --}}
+                                            @if (Auth::check())
+                                                <img src="{{ auth()->user()->profile_picture }}"
+                                                    alt="User Profile Picture" class="rounded-circle" />
+                                            @else
+                                                <img src="{{ asset('default-avatar.png') }}" alt="Guest"
+                                                    class="rounded-circle" />
+                                            @endif
+
                                             <!-- Online status indicator -->
                                             <div class="status-indicator"></div>
                                         </div>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <span class="fw-semibold d-block">{{ auth()->user()->name }}</span>
-                                        <small class="text-muted text-capitalize">{{ auth()->user()->role }}</small>
+                                        {{-- <span class="fw-semibold d-block">{{ auth()->user()->name }}</span>
+                                        <small class="text-muted text-capitalize">{{ auth()->user()->role }}</small> --}}
+                                        @if (Auth::check())
+                                            <span class="fw-semibold d-block">{{ auth()->user()->name }}</span>
+                                            <small class="text-muted text-capitalize">{{ auth()->user()->role }}</small>
+                                        @else
+                                            <span class="fw-semibold d-block">Guest</span>
+                                            <small class="text-muted text-capitalize">Pengunjung</small>
+                                        @endif
                                     </div>
                                 </div>
                             </a>
@@ -116,8 +151,9 @@
                                 <span class="align-middle">{{ __('navbar.profile.profile') }}</span>
                             </a>
                         </li>
-                        @if(auth()->user()->role == 'admin')
-                        <!-- Admin-specific items can be placed here -->
+                        {{-- @if (auth()->user()->role == 'admin') --}}
+                        @if (Auth::check() && Auth::user()->role != 'admin')
+                            <!-- Admin-specific items can be placed here -->
                         @endif
                         <li>
                             <div class="dropdown-divider"></div>
@@ -138,4 +174,5 @@
         </div>
     </nav>
 </body>
+
 </html>

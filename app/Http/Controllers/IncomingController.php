@@ -20,6 +20,7 @@ class IncomingController extends Controller
     // Menampilkan semua data surat masuk dengan filter
     public function index(Request $request)
     {
+        $user = auth()->user();
         $query = Incoming::query(); // Anda bisa langsung menggunakan Incoming::query() atau Incoming::where()
 
         if ($request->has('search') && $request->search != '') {
@@ -42,9 +43,21 @@ class IncomingController extends Controller
         return view('transaction.incoming.index', [
             'data' => $incoming,
             'search' => $request->search,
+            'user' => $user
         ]);
     }
 
+    public function indexapi()
+    {
+        $incoming = Incoming::latest()->get();
+        $response = [
+            'success' => true,
+            'message' => 'Daftar incoming',
+            'data' => $incoming,
+        ];
+
+        return response()->json($response, 200);
+    }
 
 
     public function create()
@@ -252,7 +265,7 @@ class IncomingController extends Controller
         return Excel::download(new IncomingExport, "surat masuk.xlsx");
     }
 
-   
+
 
 
 }

@@ -88,6 +88,43 @@ $monthlyOutgoingLetters = array_replace(array_fill(1, 12, 0), $monthlyOutgoingLe
     'percentageLetterTransaction' => GeneralHelper::calculateChangePercentage($yesterdayLetterTransaction, $todayLetterTransaction),
     'monthlyIncomingLetters' => array_values($monthlyIncomingLetters),
     'monthlyOutgoingLetters' => array_values($monthlyOutgoingLetters),
+
+
         ]);
     }
+
+    public function profile(): View
+    {
+        // Ambil data user yang sedang login
+        $user = Auth::user();
+
+        return view('pages.profile', [
+            'user' => $user,
+            'currentDate' => Carbon::now()->isoFormat('dddd, D MMMM YYYY')
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->validate([
+            // ... validasi lainnya
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('profile_picture')) {
+            // Hapus gambar lama jika ada
+            if (auth()->user()->profile_picture) {
+                Storage::delete(auth()->user()->profile_picture);
+            }
+
+            // Simpan gambar baru
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $user['profile_picture'] = $path;
+        }
+
+        auth()->user()->update($user);
+
+        return back()->with('success', 'Profile updated');
+    }
+
 }

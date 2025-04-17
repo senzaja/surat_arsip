@@ -39,6 +39,18 @@ class OutgoingController extends Controller
         ]);
     }
 
+    public function indexapi()
+    {
+        $outgoing = Outgoing::latest()->get();
+        $response = [
+            'success' => true,
+            'message' => 'Daftar outgoing',
+            'data' => $outgoing,
+        ];
+
+        return response()->json($response, 200);
+    }
+
     // Menampilkan form untuk membuat surat keluar baru
     public function create()
     {

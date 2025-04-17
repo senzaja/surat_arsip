@@ -49,7 +49,8 @@
                         <a href="{{ route('incomings.pdf') }}" class="btn btn-sm btn-danger">
                             <i class="fas fa-file-pdf"></i> Printout PDF
                         </a>
-                        @if (Auth::user()->role != 'admin')
+                        {{-- @if (Auth::user()->role != 'admin') --}}
+                        @if (Auth::check() && Auth::user()->role != 'admin')
                         <a href="{{ route('transaction.incoming.create') }}" class="btn btn-primary btn-sm">
                             Tambah Data
                         </a>
@@ -122,7 +123,8 @@
                                             <td>{{ $item->status_disposisi }}</td>
                                             <td class="action-buttons">
                                                 <a href="{{ route('transaction.incoming.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                                @if (Auth::user()->role == 'admin')
+                                                {{-- @if (Auth::user()->role == 'admin') --}}
+                                                @if (Auth::check() && Auth::user()->role != 'admin')
                                                     <form action="{{ route('transaction.incoming.destroy', $item->id) }}" method="post" style="display:inline;">
                                                         @method('DELETE')
                                                         @csrf
